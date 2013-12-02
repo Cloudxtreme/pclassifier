@@ -1,0 +1,28 @@
+<project>
+  <path id="lib.path">
+  </path>
+  <path id="junit.class.path">
+    <path refid="lib.path" />
+    <pathelement location="build/classes" />
+    <pathelement path="${java.class.path}" />
+  </path>
+  <target name="clean">
+    <delete dir="build"/>
+  </target>
+  <target name="compile">
+    <mkdir dir="build/classes"/>
+    <javac includeantruntime="false" srcdir="." destdir="build/classes">
+      <classpath refid="lib.path" />
+      <compilerarg value="-Xlint:unchecked" />
+    </javac>
+  </target>
+  <target name="jar" depends="compile">
+    <mkdir dir="build/jar"/>
+    <jar destfile="build/jar/pclassifier.jar" basedir="build/classes">
+      <manifest>
+        <attribute name="Main-Class" value="main.GatewayDispatch" />
+      </manifest>
+      <fileset dir="main" includes="**/*" />
+    </jar>
+  </target>
+</project>
