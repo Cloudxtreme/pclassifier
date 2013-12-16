@@ -38,8 +38,7 @@ public class Server {
             try {
               long N = new Long(line);
               BruteForceFactor factor = new BruteForceFactor(N);
-              out.println(factor.toString());
-              out.println("3"); // temporary for now .
+              out.println(factor.toString() + ".3");
               out.flush();
             } catch (NumberFormatException ex) {
               if (Configuration.DEBUG) {
