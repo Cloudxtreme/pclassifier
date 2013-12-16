@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Random;
 
+import main.classifier.Clustering;
 import main.service.Server;
 
 public class Gateway {
@@ -26,12 +27,25 @@ public class Gateway {
     tempRequests = 0;
   }
 
+  public static synchronized void setDerivatives(double d, double d2) {
+    deriv = d;
+    deriv2 = d2;
+    if (deriv > Configuration.DERIV &&
+        deriv2 > Configuration.DERIV2) {
+      ddos = true;
+    } else if (deriv < -Configuration.DERIV &&
+               deriv2 < -Configuration.DERIV2) {
+      ddos = false;
+    }
+  }
+
   public static void main(String args[]) {
     ddos = false;
     deriv = 0.0;
     deriv2 = 0.0;
     tempRequests = 0;
     hosts = new PriorityQueue<Host>(Configuration.HOSTS.length);
+    Clustering.initClustering();
 
     if (Configuration.DEBUG) {
       System.out.println("Forking updater thread...");
@@ -59,13 +73,18 @@ public class Gateway {
       while (true) {
         if (hosts.size() > 0) {
           sock = listener.accept();
-          Host next = hosts.peek();
-          if (Configuration.DEBUG) {
-            System.out.println("Queueing connection for " + next.toString());
+          double init = ddos ? Configuration.BETA : Configuration.ALPHA;
+          String ip = sock.getRemoteSocketAddress().toString();
+          Clustering.addSample(ip, new Tuple<Double,Double>(init, init));
+          if (Clustering.isGoodHost(ip)) {
+            Host next = hosts.peek();
+            if (Configuration.DEBUG) {
+              System.out.println("Queueing connection for " + next.toString());
+            }
+            next.addConnection(sock);
+            Thread t = new Thread(next);
+            t.start();
           }
-          next.addConnection(sock);
-          Thread t = new Thread(next);
-          t.start();
         }
       }
     } catch (IOException ex) {
