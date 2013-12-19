@@ -1,0 +1,17 @@
+pclassifier
+===================================
+
+You need Apache Ant [1] and the Java runtime environment to build and run
+the software. To build, execute
+
+  $ ant clean compile jar
+
+from the main directory. This will create two jar files - pclassifier.jar (the
+main gateway system) and service.jar (an implementation of the toy service as
+described in the paper) - in the build/jar directory.
+
+There is a configuration file at main.Configuration, which can be used to
+configure listening hosts and other parameters.
+
+Once the system is running, you are able to connect to the Gateway via any TCP
+client (e.g. telnet for testing).
