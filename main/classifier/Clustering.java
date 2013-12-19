@@ -3,6 +3,7 @@ package main.classifier;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import main.Configuration;
 import main.Tuple;
@@ -38,6 +39,14 @@ public class Clustering implements Runnable {
       if (Configuration.DEBUG) {
         System.out.println("Cluster queueing interruption: " + ex);
       }
+    }
+  }
+
+  public static synchronized void deduct(double delta) {
+    for (Entry<String,Tuple<Double,Double>> e : table.entrySet()) {
+      Tuple<Double,Double> t = new Tuple<Double,Double>(
+          e.getValue().fst() - delta, e.getValue().snd() - delta);
+      table.put(e.getKey(), t);
     }
   }
 

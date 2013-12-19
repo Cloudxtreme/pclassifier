@@ -37,8 +37,10 @@ public class Server {
           } else {
             try {
               long N = new Long(line);
+              long startTime = System.nanoTime();
               BruteForceFactor factor = new BruteForceFactor(N);
-              out.println(factor.toString() + ".3");
+              long endTime = System.nanoTime();
+              out.println(factor.toString() + String.valueOf(endTime-startTime));
               out.flush();
             } catch (NumberFormatException ex) {
               if (Configuration.DEBUG) {
